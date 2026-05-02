@@ -3,20 +3,50 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: keepall API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: dashboard
+    description: Dashboard summary operations
+  - name: semesters
+    description: Semester management
+  - name: subjects
+    description: Subject management
+  - name: lectures
+    description: Lecture management
+  - name: notes
+    description: Note management
+  - name: files
+    description: File management
+  - name: audio
+    description: Audio record management
+  - name: exams
+    description: Past exam management
+  - name: tasks
+    description: Assignment/task management
+  - name: reminders
+    description: Reminder management
+  - name: tags
+    description: Tag management
+  - name: search
+    description: Global search
+  - name: trash
+    description: Trash and restore operations
+  - name: profile
+    description: User profile operations
+  - name: admin
+    description: Admin dashboard operations
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +54,1259 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ─── DASHBOARD ───────────────────────────────────────────────
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard overview stats
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/upcoming:
+    get:
+      operationId: getDashboardUpcoming
+      tags: [dashboard]
+      summary: Get upcoming tasks and reminders
+      responses:
+        "200":
+          description: Upcoming items
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpcomingItems"
+
+  /dashboard/recent-files:
+    get:
+      operationId: getDashboardRecentFiles
+      tags: [dashboard]
+      summary: Get recently uploaded files
+      responses:
+        "200":
+          description: Recent files
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/File"
+
+  /dashboard/recent-notes:
+    get:
+      operationId: getDashboardRecentNotes
+      tags: [dashboard]
+      summary: Get recent notes
+      responses:
+        "200":
+          description: Recent notes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Note"
+
+  # ─── SEMESTERS ───────────────────────────────────────────────
+  /semesters:
+    get:
+      operationId: getSemesters
+      tags: [semesters]
+      summary: List all semesters
+      responses:
+        "200":
+          description: List of semesters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Semester"
+    post:
+      operationId: createSemester
+      tags: [semesters]
+      summary: Create a semester
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSemesterBody"
+      responses:
+        "201":
+          description: Created semester
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Semester"
+
+  /semesters/{id}:
+    get:
+      operationId: getSemester
+      tags: [semesters]
+      summary: Get a semester by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Semester
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Semester"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateSemester
+      tags: [semesters]
+      summary: Update a semester
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSemesterBody"
+      responses:
+        "200":
+          description: Updated semester
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Semester"
+    delete:
+      operationId: deleteSemester
+      tags: [semesters]
+      summary: Delete a semester
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /semesters/{id}/activate:
+    patch:
+      operationId: activateSemester
+      tags: [semesters]
+      summary: Set a semester as active
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Activated semester
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Semester"
+
+  # ─── SUBJECTS ────────────────────────────────────────────────
+  /subjects:
+    get:
+      operationId: getSubjects
+      tags: [subjects]
+      summary: List subjects
+      parameters:
+        - name: semesterId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of subjects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Subject"
+    post:
+      operationId: createSubject
+      tags: [subjects]
+      summary: Create a subject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSubjectBody"
+      responses:
+        "201":
+          description: Created subject
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+
+  /subjects/{id}:
+    get:
+      operationId: getSubject
+      tags: [subjects]
+      summary: Get a subject by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Subject
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateSubject
+      tags: [subjects]
+      summary: Update a subject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSubjectBody"
+      responses:
+        "200":
+          description: Updated subject
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+    delete:
+      operationId: deleteSubject
+      tags: [subjects]
+      summary: Delete a subject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /subjects/{id}/stats:
+    get:
+      operationId: getSubjectStats
+      tags: [subjects]
+      summary: Get counts for notes, files, tasks etc. for a subject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Subject stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubjectStats"
+
+  # ─── LECTURES ────────────────────────────────────────────────
+  /lectures:
+    get:
+      operationId: getLectures
+      tags: [lectures]
+      summary: List lectures for a subject
+      parameters:
+        - name: subjectId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of lectures
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Lecture"
+    post:
+      operationId: createLecture
+      tags: [lectures]
+      summary: Create a lecture
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLectureBody"
+      responses:
+        "201":
+          description: Created lecture
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lecture"
+
+  /lectures/{id}:
+    get:
+      operationId: getLecture
+      tags: [lectures]
+      summary: Get a lecture by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Lecture
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lecture"
+    patch:
+      operationId: updateLecture
+      tags: [lectures]
+      summary: Update a lecture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateLectureBody"
+      responses:
+        "200":
+          description: Updated lecture
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lecture"
+    delete:
+      operationId: deleteLecture
+      tags: [lectures]
+      summary: Delete a lecture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── NOTES ───────────────────────────────────────────────────
+  /notes:
+    get:
+      operationId: getNotes
+      tags: [notes]
+      summary: List notes
+      parameters:
+        - name: subjectId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: lectureId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: pinned
+          in: query
+          schema:
+            type: ["boolean", "null"]
+      responses:
+        "200":
+          description: List of notes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Note"
+    post:
+      operationId: createNote
+      tags: [notes]
+      summary: Create a note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNoteBody"
+      responses:
+        "201":
+          description: Created note
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Note"
+
+  /notes/{id}:
+    get:
+      operationId: getNote
+      tags: [notes]
+      summary: Get a note by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Note
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Note"
+    patch:
+      operationId: updateNote
+      tags: [notes]
+      summary: Update a note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateNoteBody"
+      responses:
+        "200":
+          description: Updated note
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Note"
+    delete:
+      operationId: deleteNote
+      tags: [notes]
+      summary: Soft-delete a note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /notes/{id}/pin:
+    patch:
+      operationId: toggleNotePin
+      tags: [notes]
+      summary: Toggle note pin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Updated note
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Note"
+
+  # ─── FILES ───────────────────────────────────────────────────
+  /files:
+    get:
+      operationId: getFiles
+      tags: [files]
+      summary: List files
+      parameters:
+        - name: subjectId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: lectureId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of files
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/File"
+    post:
+      operationId: createFileRecord
+      tags: [files]
+      summary: Create a file record (after upload)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFileBody"
+      responses:
+        "201":
+          description: Created file record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/File"
+
+  /files/upload-url:
+    post:
+      operationId: getFileUploadUrl
+      tags: [files]
+      summary: Get a presigned upload URL for a file
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadUrlRequestBody"
+      responses:
+        "200":
+          description: Upload URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadUrlResponse"
+
+  /files/{id}:
+    get:
+      operationId: getFile
+      tags: [files]
+      summary: Get a file by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: File
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/File"
+    patch:
+      operationId: updateFile
+      tags: [files]
+      summary: Update file metadata
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFileBody"
+      responses:
+        "200":
+          description: Updated file
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/File"
+    delete:
+      operationId: deleteFile
+      tags: [files]
+      summary: Soft-delete a file
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── AUDIO ───────────────────────────────────────────────────
+  /audio:
+    get:
+      operationId: getAudioRecords
+      tags: [audio]
+      summary: List audio records
+      parameters:
+        - name: subjectId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: lectureId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of audio records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AudioRecord"
+    post:
+      operationId: createAudioRecord
+      tags: [audio]
+      summary: Create an audio record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAudioRecordBody"
+      responses:
+        "201":
+          description: Created audio record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AudioRecord"
+
+  /audio/{id}:
+    get:
+      operationId: getAudioRecord
+      tags: [audio]
+      summary: Get an audio record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Audio record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AudioRecord"
+    patch:
+      operationId: updateAudioRecord
+      tags: [audio]
+      summary: Update an audio record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAudioRecordBody"
+      responses:
+        "200":
+          description: Updated audio record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AudioRecord"
+    delete:
+      operationId: deleteAudioRecord
+      tags: [audio]
+      summary: Delete an audio record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── PAST EXAMS ──────────────────────────────────────────────
+  /exams:
+    get:
+      operationId: getExams
+      tags: [exams]
+      summary: List past exams
+      parameters:
+        - name: subjectId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of past exams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Exam"
+    post:
+      operationId: createExam
+      tags: [exams]
+      summary: Create a past exam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateExamBody"
+      responses:
+        "201":
+          description: Created exam
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exam"
+
+  /exams/{id}:
+    get:
+      operationId: getExam
+      tags: [exams]
+      summary: Get an exam by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Exam
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exam"
+    patch:
+      operationId: updateExam
+      tags: [exams]
+      summary: Update an exam
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateExamBody"
+      responses:
+        "200":
+          description: Updated exam
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exam"
+    delete:
+      operationId: deleteExam
+      tags: [exams]
+      summary: Delete an exam
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── TASKS ───────────────────────────────────────────────────
+  /tasks:
+    get:
+      operationId: getTasks
+      tags: [tasks]
+      summary: List tasks
+      parameters:
+        - name: subjectId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: status
+          in: query
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+    post:
+      operationId: createTask
+      tags: [tasks]
+      summary: Create a task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaskBody"
+      responses:
+        "201":
+          description: Created task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+
+  /tasks/{id}:
+    get:
+      operationId: getTask
+      tags: [tasks]
+      summary: Get a task by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+    patch:
+      operationId: updateTask
+      tags: [tasks]
+      summary: Update a task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskBody"
+      responses:
+        "200":
+          description: Updated task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+    delete:
+      operationId: deleteTask
+      tags: [tasks]
+      summary: Delete a task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /tasks/{id}/status:
+    patch:
+      operationId: updateTaskStatus
+      tags: [tasks]
+      summary: Update task status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskStatusBody"
+      responses:
+        "200":
+          description: Updated task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+
+  # ─── REMINDERS ───────────────────────────────────────────────
+  /reminders:
+    get:
+      operationId: getReminders
+      tags: [reminders]
+      summary: List reminders
+      parameters:
+        - name: subjectId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of reminders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reminder"
+    post:
+      operationId: createReminder
+      tags: [reminders]
+      summary: Create a reminder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReminderBody"
+      responses:
+        "201":
+          description: Created reminder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reminder"
+
+  /reminders/{id}:
+    patch:
+      operationId: updateReminder
+      tags: [reminders]
+      summary: Update a reminder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateReminderBody"
+      responses:
+        "200":
+          description: Updated reminder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reminder"
+    delete:
+      operationId: deleteReminder
+      tags: [reminders]
+      summary: Delete a reminder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── TAGS ────────────────────────────────────────────────────
+  /tags:
+    get:
+      operationId: getTags
+      tags: [tags]
+      summary: List all tags for the user
+      responses:
+        "200":
+          description: List of tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tag"
+    post:
+      operationId: createTag
+      tags: [tags]
+      summary: Create a tag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTagBody"
+      responses:
+        "201":
+          description: Created tag
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tag"
+
+  /tags/{id}:
+    delete:
+      operationId: deleteTag
+      tags: [tags]
+      summary: Delete a tag
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── SEARCH ──────────────────────────────────────────────────
+  /search:
+    get:
+      operationId: globalSearch
+      tags: [search]
+      summary: Global search across subjects, notes, files, exams
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: ["string", "null"]
+            enum: [subjects, notes, files, exams, tasks, null]
+        - name: subjectId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResults"
+
+  # ─── TRASH ───────────────────────────────────────────────────
+  /trash:
+    get:
+      operationId: getTrashItems
+      tags: [trash]
+      summary: Get all soft-deleted items
+      responses:
+        "200":
+          description: Trash items
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrashItems"
+
+  /trash/restore:
+    post:
+      operationId: restoreTrashItem
+      tags: [trash]
+      summary: Restore a soft-deleted item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestoreItemBody"
+      responses:
+        "200":
+          description: Restored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestoreResult"
+
+  /trash/purge:
+    delete:
+      operationId: purgeTrashItem
+      tags: [trash]
+      summary: Permanently delete a trashed item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PurgeItemBody"
+      responses:
+        "204":
+          description: Purged
+
+  # ─── PROFILE ─────────────────────────────────────────────────
+  /profile:
+    get:
+      operationId: getProfile
+      tags: [profile]
+      summary: Get the current user profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+    patch:
+      operationId: updateProfile
+      tags: [profile]
+      summary: Update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileBody"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  # ─── ADMIN ───────────────────────────────────────────────────
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      summary: Admin dashboard stats
+      responses:
+        "200":
+          description: Admin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /admin/users:
+    get:
+      operationId: getAdminUsers
+      tags: [admin]
+      summary: List all users
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: limit
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUsersPage"
+
+  /admin/users/{userId}:
+    get:
+      operationId: getAdminUser
+      tags: [admin]
+      summary: Get a single user's details
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUserDetail"
+
+  /admin/users/{userId}/toggle-active:
+    patch:
+      operationId: adminToggleUserActive
+      tags: [admin]
+      summary: Activate or deactivate a user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUserDetail"
+
+  /admin/activity:
+    get:
+      operationId: getAdminActivity
+      tags: [admin]
+      summary: Get recent admin activity logs
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: limit
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Activity logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityLog"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +1314,790 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    # ─── DASHBOARD ─────────────────────
+    DashboardStats:
+      type: object
+      properties:
+        totalSubjects:
+          type: integer
+        totalNotes:
+          type: integer
+        totalFiles:
+          type: integer
+        totalTasks:
+          type: integer
+        pendingTasks:
+          type: integer
+        upcomingReminders:
+          type: integer
+        activeSemester:
+          $ref: "#/components/schemas/Semester"
+      required:
+        [totalSubjects, totalNotes, totalFiles, totalTasks, pendingTasks, upcomingReminders]
+
+    UpcomingItems:
+      type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+        reminders:
+          type: array
+          items:
+            $ref: "#/components/schemas/Reminder"
+      required: [tasks, reminders]
+
+    # ─── SEMESTER ──────────────────────
+    Semester:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+      required: [id, title, isActive, createdAt]
+
+    CreateSemesterBody:
+      type: object
+      properties:
+        title:
+          type: string
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+      required: [title]
+
+    UpdateSemesterBody:
+      type: object
+      properties:
+        title:
+          type: string
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+
+    # ─── SUBJECT ───────────────────────
+    Subject:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        code:
+          type: ["string", "null"]
+        instructor:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        color:
+          type: ["string", "null"]
+        icon:
+          type: ["string", "null"]
+        semesterId:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+      required: [id, title, createdAt]
+
+    SubjectStats:
+      type: object
+      properties:
+        lectures:
+          type: integer
+        notes:
+          type: integer
+        files:
+          type: integer
+        audio:
+          type: integer
+        exams:
+          type: integer
+        tasks:
+          type: integer
+        reminders:
+          type: integer
+      required: [lectures, notes, files, audio, exams, tasks, reminders]
+
+    CreateSubjectBody:
+      type: object
+      properties:
+        title:
+          type: string
+        code:
+          type: ["string", "null"]
+        instructor:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        color:
+          type: ["string", "null"]
+        icon:
+          type: ["string", "null"]
+        semesterId:
+          type: ["integer", "null"]
+      required: [title]
+
+    UpdateSubjectBody:
+      type: object
+      properties:
+        title:
+          type: string
+        code:
+          type: ["string", "null"]
+        instructor:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        color:
+          type: ["string", "null"]
+        icon:
+          type: ["string", "null"]
+        semesterId:
+          type: ["integer", "null"]
+
+    # ─── LECTURE ───────────────────────
+    Lecture:
+      type: object
+      properties:
+        id:
+          type: integer
+        subjectId:
+          type: integer
+        title:
+          type: string
+        date:
+          type: ["string", "null"]
+        summary:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required: [id, subjectId, title, createdAt]
+
+    CreateLectureBody:
+      type: object
+      properties:
+        subjectId:
+          type: integer
+        title:
+          type: string
+        date:
+          type: ["string", "null"]
+        summary:
+          type: ["string", "null"]
+      required: [subjectId, title]
+
+    UpdateLectureBody:
+      type: object
+      properties:
+        title:
+          type: string
+        date:
+          type: ["string", "null"]
+        summary:
+          type: ["string", "null"]
+
+    # ─── NOTE ──────────────────────────
+    Note:
+      type: object
+      properties:
+        id:
+          type: integer
+        subjectId:
+          type: ["integer", "null"]
+        lectureId:
+          type: ["integer", "null"]
+        title:
+          type: string
+        content:
+          type: ["string", "null"]
+        isPinned:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        deletedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required: [id, title, isPinned, tags, createdAt, updatedAt]
+
+    CreateNoteBody:
+      type: object
+      properties:
+        subjectId:
+          type: ["integer", "null"]
+        lectureId:
+          type: ["integer", "null"]
+        title:
+          type: string
+        content:
+          type: ["string", "null"]
+        isPinned:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+      required: [title]
+
+    UpdateNoteBody:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: ["string", "null"]
+        isPinned:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+
+    # ─── FILE ──────────────────────────
+    File:
+      type: object
+      properties:
+        id:
+          type: integer
+        subjectId:
+          type: ["integer", "null"]
+        lectureId:
+          type: ["integer", "null"]
+        name:
+          type: string
+        fileType:
+          type: string
+        fileSize:
+          type: ["integer", "null"]
+        storageKey:
+          type: string
+        url:
+          type: ["string", "null"]
+        deletedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required: [id, name, fileType, storageKey, createdAt]
+
+    CreateFileBody:
+      type: object
+      properties:
+        subjectId:
+          type: ["integer", "null"]
+        lectureId:
+          type: ["integer", "null"]
+        name:
+          type: string
+        fileType:
+          type: string
+        fileSize:
+          type: ["integer", "null"]
+        storageKey:
+          type: string
+      required: [name, fileType, storageKey]
+
+    UpdateFileBody:
+      type: object
+      properties:
+        name:
+          type: string
+        subjectId:
+          type: ["integer", "null"]
+        lectureId:
+          type: ["integer", "null"]
+
+    UploadUrlRequestBody:
+      type: object
+      properties:
+        filename:
+          type: string
+        contentType:
+          type: string
+        subjectId:
+          type: ["integer", "null"]
+      required: [filename, contentType]
+
+    UploadUrlResponse:
+      type: object
+      properties:
+        uploadUrl:
+          type: string
+        storageKey:
+          type: string
+      required: [uploadUrl, storageKey]
+
+    # ─── AUDIO ─────────────────────────
+    AudioRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        subjectId:
+          type: ["integer", "null"]
+        lectureId:
+          type: ["integer", "null"]
+        title:
+          type: string
+        duration:
+          type: ["integer", "null"]
+        description:
+          type: ["string", "null"]
+        transcript:
+          type: ["string", "null"]
+        storageKey:
+          type: string
+        url:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required: [id, title, storageKey, createdAt]
+
+    CreateAudioRecordBody:
+      type: object
+      properties:
+        subjectId:
+          type: ["integer", "null"]
+        lectureId:
+          type: ["integer", "null"]
+        title:
+          type: string
+        duration:
+          type: ["integer", "null"]
+        description:
+          type: ["string", "null"]
+        transcript:
+          type: ["string", "null"]
+        storageKey:
+          type: string
+      required: [title, storageKey]
+
+    UpdateAudioRecordBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        transcript:
+          type: ["string", "null"]
+
+    # ─── EXAM ──────────────────────────
+    Exam:
+      type: object
+      properties:
+        id:
+          type: integer
+        subjectId:
+          type: ["integer", "null"]
+        year:
+          type: ["string", "null"]
+        term:
+          type: ["string", "null"]
+        instructor:
+          type: ["string", "null"]
+        examType:
+          type: ["string", "null"]
+        difficulty:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        fileId:
+          type: ["integer", "null"]
+        deletedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required: [id, createdAt]
+
+    CreateExamBody:
+      type: object
+      properties:
+        subjectId:
+          type: ["integer", "null"]
+        year:
+          type: ["string", "null"]
+        term:
+          type: ["string", "null"]
+        instructor:
+          type: ["string", "null"]
+        examType:
+          type: ["string", "null"]
+        difficulty:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        fileId:
+          type: ["integer", "null"]
+
+    UpdateExamBody:
+      type: object
+      properties:
+        year:
+          type: ["string", "null"]
+        term:
+          type: ["string", "null"]
+        instructor:
+          type: ["string", "null"]
+        examType:
+          type: ["string", "null"]
+        difficulty:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        fileId:
+          type: ["integer", "null"]
+
+    # ─── TASK ──────────────────────────
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+        subjectId:
+          type: ["integer", "null"]
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        dueDate:
+          type: ["string", "null"]
+        priority:
+          type: string
+          enum: [low, medium, high]
+        status:
+          type: string
+          enum: [pending, in_progress, done]
+        deletedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required: [id, title, priority, status, createdAt]
+
+    CreateTaskBody:
+      type: object
+      properties:
+        subjectId:
+          type: ["integer", "null"]
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        dueDate:
+          type: ["string", "null"]
+        priority:
+          type: string
+          enum: [low, medium, high]
+        status:
+          type: string
+          enum: [pending, in_progress, done]
+      required: [title, priority, status]
+
+    UpdateTaskBody:
+      type: object
+      properties:
+        subjectId:
+          type: ["integer", "null"]
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        dueDate:
+          type: ["string", "null"]
+        priority:
+          type: string
+          enum: [low, medium, high]
+        status:
+          type: string
+          enum: [pending, in_progress, done]
+
+    UpdateTaskStatusBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, in_progress, done]
+      required: [status]
+
+    # ─── REMINDER ──────────────────────
+    Reminder:
+      type: object
+      properties:
+        id:
+          type: integer
+        subjectId:
+          type: ["integer", "null"]
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        remindAt:
+          type: string
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+      required: [id, title, remindAt, isRead, createdAt]
+
+    CreateReminderBody:
+      type: object
+      properties:
+        subjectId:
+          type: ["integer", "null"]
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        remindAt:
+          type: string
+      required: [title, remindAt]
+
+    UpdateReminderBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        remindAt:
+          type: string
+        isRead:
+          type: boolean
+
+    # ─── TAG ───────────────────────────
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        color:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required: [id, name, createdAt]
+
+    CreateTagBody:
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: ["string", "null"]
+      required: [name]
+
+    # ─── SEARCH ────────────────────────
+    SearchResults:
+      type: object
+      properties:
+        subjects:
+          type: array
+          items:
+            $ref: "#/components/schemas/Subject"
+        notes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Note"
+        files:
+          type: array
+          items:
+            $ref: "#/components/schemas/File"
+        exams:
+          type: array
+          items:
+            $ref: "#/components/schemas/Exam"
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+      required: [subjects, notes, files, exams, tasks]
+
+    # ─── TRASH ─────────────────────────
+    TrashItems:
+      type: object
+      properties:
+        notes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Note"
+        files:
+          type: array
+          items:
+            $ref: "#/components/schemas/File"
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+        exams:
+          type: array
+          items:
+            $ref: "#/components/schemas/Exam"
+      required: [notes, files, tasks, exams]
+
+    RestoreItemBody:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [note, file, task, exam]
+        id:
+          type: integer
+      required: [type, id]
+
+    RestoreResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required: [success]
+
+    PurgeItemBody:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [note, file, task, exam]
+        id:
+          type: integer
+      required: [type, id]
+
+    # ─── PROFILE ───────────────────────
+    UserProfile:
+      type: object
+      properties:
+        clerkId:
+          type: string
+        displayName:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        avatarUrl:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+      required: [clerkId, isActive, createdAt]
+
+    UpdateProfileBody:
+      type: object
+      properties:
+        displayName:
+          type: ["string", "null"]
+
+    # ─── ADMIN ─────────────────────────
+    AdminStats:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+        totalSubjects:
+          type: integer
+        totalFiles:
+          type: integer
+        totalAudioRecords:
+          type: integer
+        totalExams:
+          type: integer
+        totalTasks:
+          type: integer
+        totalNotes:
+          type: integer
+      required:
+        [totalUsers, totalSubjects, totalFiles, totalAudioRecords, totalExams, totalTasks, totalNotes]
+
+    AdminUserItem:
+      type: object
+      properties:
+        clerkId:
+          type: string
+        displayName:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        subjectsCount:
+          type: integer
+        filesCount:
+          type: integer
+        createdAt:
+          type: string
+      required: [clerkId, isActive, subjectsCount, filesCount, createdAt]
+
+    AdminUsersPage:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminUserItem"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [users, total, page, limit]
+
+    AdminUserDetail:
+      type: object
+      properties:
+        clerkId:
+          type: string
+        displayName:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        subjectsCount:
+          type: integer
+        filesCount:
+          type: integer
+        notesCount:
+          type: integer
+        tasksCount:
+          type: integer
+        createdAt:
+          type: string
+      required: [clerkId, isActive, subjectsCount, filesCount, notesCount, tasksCount, createdAt]
+
+    ActivityLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: string
+        action:
+          type: string
+        entity:
+          type: ["string", "null"]
+        entityId:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required: [id, userId, action, createdAt]

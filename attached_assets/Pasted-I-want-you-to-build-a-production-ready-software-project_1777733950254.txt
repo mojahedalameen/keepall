@@ -1,0 +1,375 @@
+I want you to build a production-ready software project called "keepall".
+
+Important product rules:
+- The app name must be: keepall
+- The entire application must be in English only
+- No Arabic UI
+- No multilingual support in the first version
+- All labels, buttons, forms, validation messages, placeholders, notifications, and system content must be English only
+
+The product is a platform for organizing academic materials professionally and reliably.
+It has only two main components:
+
+1) Beneficiary App
+2) Private Admin Dashboard for me only as the project owner
+
+The system must not be tightly coupled to Replit or any single platform.
+It must be designed in a portable, scalable, and maintainable way so I can:
+- develop on Replit if needed
+- keep the source of truth on GitHub
+- deploy on Vercel
+- use Supabase for backend services if that is the best technical choice
+
+Your job is to make the best technical decisions regarding:
+- programming language
+- framework
+- database
+- authentication
+- file storage
+- architecture
+- folder structure
+- deployment setup
+
+However, your decisions must prioritize:
+- long-term maintainability
+- portability
+- security
+- scalability
+- clean architecture
+- production readiness
+
+Product goal:
+keepall helps a user create and manage academic subjects, and store everything related to each subject in one organized space, including:
+- notes
+- PDFs
+- images
+- documents
+- audio files
+- past exams
+- assignments
+- links
+- lecture summaries
+- reminders
+- important study content
+
+Core idea:
+Each subject should act like a smart organized container that stores everything related to that subject, with fast retrieval, structured organization, and reliable storage.
+
+Main requirement:
+Do not build a fake prototype or only a visual demo.
+Build a real structured project with a strong foundation that can grow later.
+
+====================================
+PART 1 — BENEFICIARY APP
+====================================
+
+This is the main app used by the end user.
+
+Required features:
+
+1. Authentication
+- Sign up
+- Sign in
+- Sign out
+- Forgot password
+- Reset password
+- Secure session handling
+
+2. Main Dashboard
+- Overview cards
+- Total subjects
+- Upcoming tasks
+- Recent files
+- Recent notes
+- Upcoming exam or reminder
+
+3. Semester Management
+- Create semester
+- Edit semester
+- Delete semester
+- Set active semester
+- Semester title
+- Start date
+- End date
+
+4. Subject Management
+- Create subject
+- Edit subject
+- Delete subject
+- Subject title
+- Subject code
+- Instructor name
+- Description
+- Color or icon
+- Assign subject to semester
+
+5. Subject Details Page
+Each subject must have a professional details page with tabs or sections such as:
+- Overview
+- Lectures
+- Notes
+- Files
+- Audio Records
+- Past Exams
+- Assignments
+- Links
+- Reminders
+
+6. Lectures
+- Add lecture
+- Edit lecture
+- Delete lecture
+- Lecture title
+- Lecture date
+- Summary
+- Attach files or notes to lecture
+
+7. Notes
+- Create note
+- Edit note
+- Delete note
+- Note title
+- Rich text or structured content
+- Link note to subject or lecture
+- Pin important notes
+- Support tags
+
+8. Files
+- Upload PDFs, images, and documents
+- Store file metadata
+- File name
+- File type
+- File size
+- Upload date
+- Link file to subject or lecture
+- Organized file list
+- Preview when possible
+- Soft delete and restore
+
+9. Audio Records
+- Upload audio file
+- Store title
+- Duration
+- Description
+- Link to subject or lecture
+- Optional transcript field for future use
+
+10. Past Exams
+- Add past exam
+- Year
+- Term if applicable
+- Instructor
+- Exam type
+- Difficulty
+- Notes
+- Attached file
+
+11. Assignments and Tasks
+- Create assignment or task
+- Title
+- Description
+- Due date
+- Priority
+- Status
+- Link to subject
+
+12. Reminders
+- Create reminders for exams, tasks, lectures, or custom items
+- Show reminders in dashboard
+- In-app reminder system
+
+13. Search
+- Global search across the app
+- Search in subjects
+- Search in notes
+- Search in files
+- Search in past exams
+- Search filters by subject, type, date, and tag
+
+14. Tags
+- Support reusable tags
+- Examples: important, review, repeated, difficult, later
+
+15. Trash / Archive
+- Soft delete
+- Trash page
+- Restore deleted items
+
+16. User Settings
+- Edit profile
+- Change password
+- Avatar if applicable
+- Basic preferences
+
+====================================
+PART 2 — PRIVATE ADMIN DASHBOARD
+====================================
+
+This dashboard is only for me as the owner.
+It is not a multi-admin system in version one.
+It must be fully separated logically and securely from the beneficiary side.
+
+Required admin features:
+
+1. Separate admin authentication
+2. Admin dashboard overview with:
+- total users
+- total subjects
+- total files
+- total audio records
+- total past exams
+- total tasks
+- recent activity
+
+3. User management
+- list users
+- view user details
+- activate/deactivate users
+- inspect account activity
+
+4. Content monitoring
+- subjects per user
+- uploaded files count
+- audio uploads count
+- exam uploads count
+- latest activity
+
+5. Basic system settings
+6. Admin activity logs
+7. Block any normal user from accessing admin routes
+8. Proper authorization checks on both frontend and backend
+
+====================================
+SECURITY REQUIREMENTS
+====================================
+
+I want professional-grade security implementation, including:
+- strict separation between normal users and admin
+- protected admin routes
+- authorization checks at UI and server levels
+- never rely on frontend protection alone
+- verify session on every sensitive request
+- use Row Level Security if Supabase is selected
+- secure file access
+- never expose sensitive secrets in the client
+- proper use of environment variables
+- secure storage and access rules for user files
+- activity logs for critical actions
+
+====================================
+ENGINEERING REQUIREMENTS
+====================================
+
+I want:
+- clean architecture
+- maintainable codebase
+- reusable components
+- clear folder structure
+- strict validation
+- professional forms
+- clear error messages
+- loading states
+- empty states
+- error states
+- responsive UI
+- modern clean design
+- excellent UX
+- English-only content across the entire project
+
+====================================
+TECHNICAL REQUIREMENTS
+====================================
+
+The project should be easy to:
+- push to GitHub
+- deploy to Vercel
+- connect with Supabase
+- import into Replit from GitHub if needed later
+
+Do not make any critical part dependent on Replit only.
+
+If you choose Supabase, use it properly for:
+- Postgres database
+- Auth
+- Storage
+- security policies
+- scalable backend foundation
+
+If you choose Vercel deployment, prepare the project for real deployment with proper environment configuration.
+
+====================================
+DELIVERABLES
+====================================
+
+I want you to work in this order:
+
+Phase 1:
+- choose the best tech stack
+- explain why briefly
+- define the architecture
+- define the folder structure
+- define the database schema
+- define roles and permissions
+- define the core routes and pages
+
+Phase 2:
+- initialize the actual project
+- build authentication
+- build base layout
+- build dashboard
+- build semester and subject management
+
+Phase 3:
+- build notes
+- build files
+- build audio records
+- build past exams
+- build tasks and reminders
+
+Phase 4:
+- build search
+- build tags
+- build trash
+- build activity logs
+
+Phase 5:
+- build private admin dashboard
+- build user management
+- build content monitoring
+- build system settings
+
+Phase 6:
+- polish UX
+- improve performance
+- improve security
+- prepare deployment
+- add README
+- add env.example
+- add seed/demo data
+
+====================================
+IMPORTANT IMPLEMENTATION RULES
+====================================
+
+- Build a real app, not just static screens
+- Use real schema and real relationships
+- Use secure auth implementation
+- Use proper access control
+- Use clean naming conventions
+- Use scalable architecture
+- Make the app production-ready
+- Keep version one focused, but build a strong foundation for future growth
+- Do not start with secondary features before finishing the foundation
+
+At the end, I expect:
+- a real codebase
+- setup-ready structure
+- deployment-ready configuration
+- database design
+- admin/user separation
+- README
+- env.example
+- seed data
+- clear instructions to run locally and deploy
+
+Start now by choosing the best tech stack and architecture for keepall, then proceed step by step into implementation.
