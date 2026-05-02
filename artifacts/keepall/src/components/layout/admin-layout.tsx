@@ -1,15 +1,14 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { useClerk } from "@clerk/react";
-import { Shield, Users, Activity, ArrowLeft, LogOut } from "lucide-react";
+import { Shield, Users, Activity, ArrowLeft, Lock } from "lucide-react";
+import { lockAdmin } from "@/components/admin-password-gate";
 
 interface AdminLayoutProps {
   children: ReactNode;
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const [location] = useLocation();
-  const { signOut } = useClerk();
+  const [location, setLocation] = useLocation();
 
   const navigation = [
     { name: "Dashboard", href: "/admin", icon: Activity },
@@ -52,11 +51,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex-1" />
           
           <button
-            onClick={() => signOut()}
+            onClick={() => { lockAdmin(); setLocation("/dashboard"); }}
             className="flex items-center gap-3 px-3 py-2 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors text-left"
           >
-            <LogOut className="h-4 w-4" />
-            Sign Out
+            <Lock className="h-4 w-4" />
+            Lock Admin
           </button>
         </nav>
       </aside>

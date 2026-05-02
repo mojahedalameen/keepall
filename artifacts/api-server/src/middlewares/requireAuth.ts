@@ -36,11 +36,9 @@ export const requireAdmin = async (req: Request, res: Response, next: NextFuncti
     res.status(401).json({ error: "Unauthorized" });
     return;
   }
-  const role = (auth?.sessionClaims as Record<string, unknown>)?.metadata
-    ? ((auth.sessionClaims as Record<string, Record<string, unknown>>).metadata?.role as string)
-    : undefined;
-
-  if (role !== "admin") {
+  const adminSecret = process.env.ADMIN_SECRET;
+  const provided = req.headers["x-admin-key"];
+  if (!adminSecret || provided !== adminSecret) {
     res.status(403).json({ error: "Admin access required" });
     return;
   }

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { ClerkProvider, SignIn, SignUp, Show, useClerk, useUser } from '@clerk/react';
+import { ClerkProvider, SignIn, SignUp, Show, useClerk } from '@clerk/react';
 import { publishableKeyFromHost } from '@clerk/react/internal';
 import { shadcn } from '@clerk/themes';
 import { Switch, Route, useLocation, Router as WouterRouter, Redirect } from 'wouter';
@@ -27,6 +27,7 @@ import AdminUserDetail from "@/pages/admin/user-detail";
 import NotFound from "@/pages/not-found";
 import MainLayout from "@/components/layout/main-layout";
 import AdminLayout from "@/components/layout/admin-layout";
+import AdminPasswordGate from "@/components/admin-password-gate";
 
 const queryClient = new QueryClient();
 
@@ -126,20 +127,14 @@ function ProtectedRoute({ component: Component }: { component: any }) {
 }
 
 function AdminRoute({ component: Component }: { component: any }) {
-  const { user, isLoaded } = useUser();
-  
-  if (!isLoaded) return null;
-  
-  if (user?.publicMetadata?.role !== 'admin') {
-    return <Redirect to="/dashboard" />;
-  }
-
   return (
     <>
       <Show when="signed-in">
-        <AdminLayout>
-          <Component />
-        </AdminLayout>
+        <AdminPasswordGate>
+          <AdminLayout>
+            <Component />
+          </AdminLayout>
+        </AdminPasswordGate>
       </Show>
       <Show when="signed-out">
         <Redirect to="/" />
